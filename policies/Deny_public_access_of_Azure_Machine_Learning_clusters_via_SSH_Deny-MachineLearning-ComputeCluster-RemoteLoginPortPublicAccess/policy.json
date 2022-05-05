@@ -1,0 +1,63 @@
+{
+ "properties": {
+  "displayName": "Deny public access of Azure Machine Learning clusters via SSH",
+  "policyType": "Custom",
+  "mode": "Indexed",
+  "description": "Deny public access of Azure Machine Learning clusters via SSH.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Machine Learning",
+   "createdBy": "20550053-ea6f-44c9-81ef-5830a8fd69e8",
+   "createdOn": "2022-02-02T20:12:11.3914838Z",
+   "updatedBy": null,
+   "updatedOn": null
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Effect",
+     "description": "Enable or disable the execution of the policy"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled",
+     "Deny"
+    ],
+    "defaultValue": "Deny"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+     },
+     {
+      "field": "Microsoft.MachineLearningServices/workspaces/computes/computeType",
+      "equals": "AmlCompute"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.MachineLearningServices/workspaces/computes/remoteLoginPortPublicAccess",
+        "exists": false
+       },
+       {
+        "field": "Microsoft.MachineLearningServices/workspaces/computes/remoteLoginPortPublicAccess",
+        "notEquals": "Disabled"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Management/managementGroups/fnzy/providers/Microsoft.Authorization/policyDefinitions/Deny-MachineLearning-ComputeCluster-RemoteLoginPortPublicAccess",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "Deny-MachineLearning-ComputeCluster-RemoteLoginPortPublicAccess"
+}
